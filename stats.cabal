@@ -1,0 +1,13 @@
+Name:            stats
+Version:         1.0
+Synopsis:        Statistical command line software
+Description:     A small command line tool for 
+                 statistical computations on a csv file.
+License:         BSD3
+License-File:    LICENSE.txt
+Author:          Thomas Lang
+Build-Type:      Simple
+Build-Depends:   base, parsec
+
+Executable:      stats
+Main-is:         StatsMain.hs
