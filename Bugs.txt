@@ -1,0 +1,13 @@
+                Recorded Bugs
+                -------------
+
+1) Infinity:
+------------
+If you run the program with the testing file Test.csv, the 
+geometric mean will return "Infinity".
+This may be caused by the file size, as the geometric
+mean is defined as  n-th root of the product of all
+values, where n is the length of the data list.
+
+For smaller files like  Test2.csv  this works perfectly.
+

@@ -18,6 +18,7 @@ version message.
 module Parsing ( parseArgs ) where
 
 import Text.ParserCombinators.Parsec
+import System.Directory               ( doesFileExist )
 
 import CalcStats
 
@@ -53,13 +54,16 @@ params = ["--help","--version","--am","--gm","--hm","--me","--ra","--ev","--es"]
 -- and calls the calculating function
 procArgs :: [String] -> String -> IO ()
 procArgs args fname = do
-                         file <- readFile fname
-                         case parseFile file of
-                           Left err   -> putStrLn $ show err
-                           Right list -> let l =  map (\x -> read x :: Double) (removeSpaces $ concat list)
-                                         in case args of 
-                                           [] ->  calculate params l
-                                           _  ->  calculate args   l
+                         okFile <- doesFileExist fname
+                         case okFile of
+                           False -> error "File does not exist, check for correct file name."
+                           True  -> do file <- readFile fname
+                                       case parseFile file of
+                                         Left err   -> putStrLn $ show err
+                                         Right list -> let l =  map (\x -> read x :: Double) (removeSpaces $ concat list)
+                                                       in case args of 
+                                                         [] ->  calculate params l
+                                                         _  ->  calculate args   l
 
 -- |helper function for removing all Spaces and empty Strings in the list  
 removeSpaces = filter (\x -> (not (" " == x)) && (not ("" == x)))
@@ -71,6 +75,10 @@ removeSpaces = filter (\x -> (not (" " == x)) && (not ("" == x)))
 --
 -- Here a CSV file has lines, that are separated by eol.
 -- Each line has cells, that are comma separated.
+--
+-- This means for the structure of the passed file, that
+-- it has to have at least one newline at the very end.
+-- If not, the parser will fail.
 --
 -- Thanks to the authors of the book "Real World Haskell"
 -- who created this minimalistic CSV parser.
@@ -123,4 +131,4 @@ printVersion = putStrLn versionMsg
 versionMsg :: String
 versionMsg = "Stats - The Statistical Command Line Tool written in Haskell only.\n \
       \ Author : Thomas Lang\n \
-      \ Version: 1.0  2014/10/02\n"
+      \ Version: 1.1  2014/10/03\n"

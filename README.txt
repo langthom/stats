@@ -30,8 +30,13 @@ $> cabal install parsec
 
 How to build it?
 ----------------
-In order to build it, just clone this repository, change
+There are two several ways of installing this program:
+In order to build it locally, just clone this repository, change
 into the directory and type "make".
+If you want to globally install it on your system, type
+"make install" instead.
+
+An additional form is to create a zipped tarball via "make package".
 
 
 How do I use it?

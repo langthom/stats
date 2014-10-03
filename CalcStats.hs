@@ -14,8 +14,8 @@ taken from the free online encyclopedia Wikipedia.
 -}
 module CalcStats ( calculate ) where
 
-import Data.List     ( sort   )
-import Data.Typeable ( typeOf )
+import Data.List            ( sort   )
+import Data.Typeable        ( typeOf )
 
 
 -- |Performs the calculation and prints the result
@@ -25,6 +25,7 @@ calculate args nums = putStrLn $ "Statistical evaluation: \n\n" ++ buildOutStrin
 
 -- |Builds the ouput String by going through all Parameters
 buildOutString :: (Eq a, Show a, Num a, Floating a, RealFrac a) => [String] -> [a] -> String -> String
+buildOutString _          []   _   = "The input list is empty, no calculations done."
 buildOutString []         _    str = str
 buildOutString ("--am":r) nums str = str ++ "Arithmetic Mean: \t\t" ++ show (calcArithM nums) ++ "\n" ++ buildOutString r nums str
 buildOutString ("--gm":r) nums str = str ++ "Geometric Mean: \t\t" ++ show (calcGeometricM nums) ++ "\n" ++ buildOutString r nums str
@@ -39,28 +40,33 @@ buildOutString ("--es":r) nums str = str ++ "Empirical Standard Deviation: \t" +
 buildOutString args       nums str = buildOutString (tail args) nums str
 
 
+-- |Rounds the passed value to two digits
+round2 :: (RealFrac a, Fractional a) => a  -> a
+round2 f = (fromInteger $ round $ f * (10^2)) / (10.0^^2)
+
+
 -- |Calculates the arithmetic mean of 
 -- all numbers in the passed list
-calcArithM :: Fractional a => [a] -> a
-calcArithM l = (sum l) / fromIntegral (length l)
+calcArithM :: (RealFrac a, Fractional a) => [a] -> a
+calcArithM l = round2 $ (sum l) / fromIntegral (length l)
 
 
 -- |Calculates the geometrix mean of
 -- all numbers in the passed list
-calcGeometricM :: Floating a => [a] -> a
-calcGeometricM l = (product l) ** (1/(fromIntegral $ length l))
+calcGeometricM :: (RealFrac a, Floating a) => [a] -> a
+calcGeometricM l = round2 $ (product l) ** (1/(fromIntegral $ length l))
 
 
 -- |Calculates the harmonic mean of
 -- all numbers in the passed list
-calcHarmonicM :: (Eq a, Fractional a) => [a] -> a
-calcHarmonicM list = (fromIntegral (length list)) / (sum $ map recip list)
+calcHarmonicM :: (Eq a, RealFrac a, Fractional a) => [a] -> a
+calcHarmonicM list = round2 $ (fromIntegral (length list)) / (sum $ map recip list)
 
 
 -- |Calculates the Median of the passed list, which
 -- is the "central" value in the sorted list
 calcMedian :: (Ord a, RealFrac a) =>  [a] -> a
-calcMedian list = calcQuantil list 0.5
+calcMedian list = round2 $ calcQuantil list 0.5
 
 
 -- |Calculates the Quantil with the passed number
@@ -83,19 +89,19 @@ calcQuantil list p | not (isInt ((fromIntegral ll) * p)) = l !! ((ceiling $ (fro
 -- the passed list, which is defined as
 -- the difference of the global maximum
 -- and the global minimum
-calcRange :: (Ord a, Num a) => [a] -> a
-calcRange list = maximum list - minimum list
+calcRange :: (Ord a, RealFrac a, Num a) => [a] -> a
+calcRange list = round2 $ maximum list - minimum list
 
 
 -- |Calculates the corrected variance of the passed list
-calcVariance :: (Fractional a) => [a] -> a
-calcVariance list = (sum $ map (\x -> (x - am)^2) list) / fromIntegral (length list - 1)
+calcVariance :: (RealFrac a, Fractional a) => [a] -> a
+calcVariance list = round2 $ (sum $ map (\x -> (x - am)^2) list) / fromIntegral (length list - 1)
                     where am = calcArithM list
 
 
 -- |Calculates the standard deviation of the
 -- passed list, which is the square root
 -- of the corrected variance of the list
-calcDeviation :: (Floating a) => [a] -> a
-calcDeviation list = sqrt $ calcVariance list
+calcDeviation :: (RealFrac a, Floating a) => [a] -> a
+calcDeviation list = round2 $ sqrt $ calcVariance list
 
