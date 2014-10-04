@@ -7,7 +7,7 @@ License:         BSD3
 License-File:    LICENSE.txt
 Author:          Thomas Lang
 Build-Type:      Simple
-Build-Depends:   base, parsec
+Build-Depends:   base, parsec, directory
 
 Executable:      stats
 Main-is:         StatsMain.hs
