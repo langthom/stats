@@ -21,6 +21,7 @@ import Text.ParserCombinators.Parsec
 import System.Directory               ( doesFileExist )
 
 import CalcStats
+import Plot
 
 
 ------------------------ [ARGUMENT PARSING SECTION] ----------------------
@@ -63,7 +64,7 @@ procArgs args fname = do
                                          Right list -> let l =  map (\x -> read x :: Double) (removeSpaces $ concat list)
                                                        in case args of 
                                                          [] ->  calculate params l
-                                                         _  ->  calculate args   l
+                                                         _  ->  calculate args   l >> plot l
 
 -- |helper function for removing all Spaces and empty Strings in the list  
 removeSpaces = filter (\x -> (not (" " == x)) && (not ("" == x)))
@@ -131,4 +132,4 @@ printVersion = putStrLn versionMsg
 versionMsg :: String
 versionMsg = "Stats - The Statistical Command Line Tool written in Haskell only.\n \
       \ Author : Thomas Lang\n \
-      \ Version: 1.1  2014/10/03\n"
+      \ Version: 1.2  2014/10/05\n"

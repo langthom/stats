@@ -40,10 +40,17 @@ help:
 	@echo 'make package: Create a zipped tarball'
 
 
+# cleaning up
 clean:
 	@echo 'Cleaning up ...'
 	@rm $(EXEC)
 	@echo 'Removing executable ... done.'
 	@rm *.hi *.o 
 	@echo 'Removing object and data files ... done.'
+	@if [ -e "./plot.tex" ]; then \
+		rm plot.*; \
+		echo 'Deleting LaTex output ... done.'; \
+	else  \
+		echo 'No LaTex output found ... ok.'; \
+	fi
 	@echo 'DONE.'
