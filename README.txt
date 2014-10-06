@@ -82,11 +82,21 @@ o --es
   Calculate the standard deviation
   See http://en.wikipedia.org/wiki/Standard_deviation
 
+o --plot
+  Plots the numbers in a typcial histogram.
+  This option will generate the necessary LaTex output file.
+  To view it, you will have to have installed the Tikz libraries.
+  If so, then you can compile it via
+
+  $> pdflatex plot.tex
+
+  Next you can view it with your favourite PDF viewer.
+
 
 Note about usage:
 If you call it with one or more of the parameters listed
 above, the program will only compute these individual values.
 If you call it with only the file name, all available options
-will be computed.
+will be computed (without help, version or plot of course).
 
 

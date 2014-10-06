@@ -19,6 +19,7 @@ module Parsing ( parseArgs ) where
 
 import Text.ParserCombinators.Parsec
 import System.Directory               ( doesFileExist )
+import Data.List
 
 import CalcStats
 import Plot
@@ -30,15 +31,15 @@ import Plot
 -- Special check for "--help" Flag. If this is passed,
 -- the help message will be displayed and NO FURTHER PROCESSING
 parseArgs :: [String] -> String -> IO ()
-parseArgs args fname | "--help" `elem` args           = printHelp
-                     | "--version" `elem` args        = printVersion
-                     | length args < 1                = error "Too few parameters."
-                     | length args > 8                = error "Too many parameters."
-                     | not (correctArgs $ init args)  = error "Incorrect parameter(s), use --help for more information."
-                     | otherwise                      = procArgs (init args) fname
+parseArgs args fname | "--help" `elem` args            = printHelp
+                     | "--version" `elem` args         = printVersion
+                     | length args < 1                 = error "Too few parameters."
+                     | length args > length params - 2 = error "Too many parameters."
+                     | not (correctArgs $ init args)   = error "Incorrect parameter(s), use --help for more information."
+                     | otherwise                       = procArgs (init args) fname
 
 
--- |Helper function do determine, if the
+-- Helper function do determine, if the
 -- passed arguments are valid
 correctArgs :: [String] -> Bool
 correctArgs x = all correct x || x == []
@@ -47,14 +48,14 @@ correctArgs x = all correct x || x == []
 
 -- |List of all available parameters
 params :: [String]
-params = ["--help","--version","--am","--gm","--hm","--me","--ra","--ev","--es"]
+params = ["--help","--version","--am","--gm","--hm","--me","--ra","--ev","--es", "--plot"]
 
 
 -- |Parses the passed CSV file, removes all spaces (because they 
 -- raise Errors during conversion), converts the Strings to Numbers
 -- and calls the calculating function
 procArgs :: [String] -> String -> IO ()
-procArgs args fname = do
+procArgs args fname = do 
                          okFile <- doesFileExist fname
                          case okFile of
                            False -> error "File does not exist, check for correct file name."
@@ -62,11 +63,21 @@ procArgs args fname = do
                                        case parseFile file of
                                          Left err   -> putStrLn $ show err
                                          Right list -> let l =  map (\x -> read x :: Double) (removeSpaces $ concat list)
-                                                       in case args of 
-                                                         [] ->  calculate params l
-                                                         _  ->  calculate args   l >> plot l
+                                                       in case "--plot" `elem` args of
+                                                            False -> putStrLn "*** INFO: No LaTex output generated ... ok.\n" >> 
+                                                                     case args \\ ["--plot"] of
+                                                                       [] -> calculate params l
+                                                                       _  -> calculate args   l 
+                                                            True  -> plot l >>= (\_ -> putStrLn "*** INFO: LaTex plot generated.\n") >> 
+                                                                     case args \\ ["--plot"] of
+                                                                       [] -> calculate params l
+                                                                       _  -> calculate args   l
 
--- |helper function for removing all Spaces and empty Strings in the list  
+
+
+
+
+-- helper function for removing all Spaces and empty Strings in the list  
 removeSpaces = filter (\x -> (not (" " == x)) && (not ("" == x)))
 
 
@@ -122,7 +133,9 @@ helpMsg = "usage: stats [OPTIONS] FILENAME\n\n\
        \ --me\t\t\tMedian \n \
        \ --ra\t\t\tRange \n \
        \ --ev\t\t\tEmpirical Standard Variance\n \
-       \ --es\t\t\tEmpirical Standard deviation\n"
+       \ --es\t\t\tEmpirical Standard deviation\n \
+       \ --plot\t\tCreates a LaTex file that contains the plot\n \
+       \ \t\t\tof the passed list as Tikz picture.\n"
          
 -- |Prints the version message on the screen         
 printVersion :: IO ()
@@ -132,4 +145,4 @@ printVersion = putStrLn versionMsg
 versionMsg :: String
 versionMsg = "Stats - The Statistical Command Line Tool written in Haskell only.\n \
       \ Author : Thomas Lang\n \
-      \ Version: 1.2  2014/10/05\n"
+      \ Version: 1.2  2014/10/06\n"

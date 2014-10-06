@@ -20,7 +20,7 @@ import Data.Typeable        ( typeOf )
 
 -- |Performs the calculation and prints the result
 calculate :: (Eq a, Show a, Num a, Floating a, RealFrac a) => [String] -> [a] -> IO ()
-calculate args nums = putStrLn $ "Statistical evaluation: \n\n" ++ buildOutString args nums ""
+calculate args nums = putStrLn $ "Statistical evaluation: \n-----------------------\n\n" ++ buildOutString args nums ""
 
 
 -- |Builds the ouput String by going through all Parameters

@@ -18,12 +18,14 @@ import Data.List        ( sort, group               )
 
 
 -- |Main access function
-plot :: (Num a, Ord a, Show a) => [a] -> IO ()
+plot :: (Num a, Ord a, Show a) => [a] -> IO Bool
 plot list = do
   ex <- doesFileExist "./plot.tex"
   case ex of
     False -> procl list
     True  -> removeFile "./plot.tex" >> procl list
+  return True -- *return True if successfully processed
+
                
 -- |Further processing, file-writing
 procl :: (Num a, Ord a, Show a) => [a] -> IO ()
@@ -46,7 +48,7 @@ graph x = concat $ map (\l@(h:_) -> "\\draw[very thick] (" ++ show h ++ ",0) -- 
 
 -- |Write Axes String
 axes :: (Show a, Num a, Ord a) => [[a]] -> [Int] -> String
-axes x y = "\\draw[->] (0,0) -- (" ++ show (length x) ++ ",0);\n \
+axes x y = "\\draw[->] (0,0) -- (" ++ show (maximum $ concat x) ++ ",0);\n \
           \ \\draw[->] (0,0) -- (0," ++ show (maximum y) ++ ");\n\n \
           \ \\foreach \\x in {" ++ show (minimum $ concat x) ++ ",...," ++ show (maximum $ concat x) ++"}\n \
           \  \\draw (\\x,1pt) -- (\\x,-3pt) \n \
@@ -58,7 +60,7 @@ axes x y = "\\draw[->] (0,0) -- (" ++ show (length x) ++ ",0);\n \
 
 -- |Write LaTex preamble
 preamble :: String
-preamble = "\\documentclass[a4paper]{article}\n \
+preamble = "\\documentclass{standalone}\n \ 
           \ \\usepackage{ tikz } \n \
           \ \\begin{document}\n \n"
                                   
