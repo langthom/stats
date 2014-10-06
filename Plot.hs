@@ -26,7 +26,7 @@ plot list = do
     True  -> removeFile "./plot.tex" >> procl list
   return True -- *return True if successfully processed
 
-               
+              
 -- |Further processing, file-writing
 procl :: (Num a, Ord a, Show a) => [a] -> IO ()
 procl list = do writeFile "./plot.tex" preamble
