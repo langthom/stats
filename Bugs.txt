@@ -11,3 +11,12 @@ values, where n is the length of the data list.
 
 For smaller files like  Test2.csv  this works perfectly.
 
+
+
+2) Dimension too large:
+-----------------------
+If the numbers in the file get too high, LaTex (Tikz)
+cannot handle this. E.g. if you use the "--plot" argument
+on stats with the file "Test.csv", the output will be
+written correctly, but LaTex will not properly compile it.
+
