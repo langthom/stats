@@ -41,14 +41,14 @@ procl list = do writeFile "./plot.tex" preamble
 
 -- |Write graph string
 graph :: (Num a, Show a) => [[a]] -> String
-graph x = concat $ map (\l@(h:t) -> "\\draw[very thick] (" ++ show h ++ ",0) -- (" ++ show h ++ "," ++ show (length l) ++ ");\n") x
+graph x = concat $ map (\l@(h:_) -> "\\draw[very thick] (" ++ show h ++ ",0) -- (" ++ show h ++ "," ++ show (length l) ++ ");\n") x
 
 
 -- |Write Axes String
-axes :: (Num a, Ord a) => [[a]] -> [Int] -> String
+axes :: (Show a, Num a, Ord a) => [[a]] -> [Int] -> String
 axes x y = "\\draw[->] (0,0) -- (" ++ show (length x) ++ ",0);\n \
           \ \\draw[->] (0,0) -- (0," ++ show (maximum y) ++ ");\n\n \
-          \ \\foreach \\x in {0,...," ++ show (length x) ++"}\n \
+          \ \\foreach \\x in {" ++ show (minimum $ concat x) ++ ",...," ++ show (maximum $ concat x) ++"}\n \
           \  \\draw (\\x,1pt) -- (\\x,-3pt) \n \
           \     node[anchor=north] {\\x}; \n\n \
           \ \\foreach \\y in {0,...," ++ show (maximum y) ++ "}\n \
